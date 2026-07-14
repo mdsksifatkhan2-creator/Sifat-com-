@@ -42,7 +42,8 @@ logger = logging.getLogger(__name__)
 
 # ================== কনফিগারেশন (এখানে আপনার মান বসান) ==================
 
-BOT_TOKEN = os.environ.get("8674203664:AAHhAhAPnhHYnhLm6uSlj1IB6LHn5dEBWgc", "8674203664:AAHhAhAPnhHYnhLm6uSlj1IB6LHn5dEBWgc")  # @BotFather থেকে পাওয়া টোকেন
+BOT_TOKEN = 
+"8674203664:AAHhAhAPnhHYnhLm6uSlj1IB6LHn5dEBWgc",  # @BotFather থেকে পাওয়া টোকেন
 
 # আপনার ৪টি চ্যানেল (public username আকারে @ সহ লিখুন)
 REQUIRED_CHANNELS = [
