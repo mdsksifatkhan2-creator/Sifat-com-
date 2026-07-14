@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
-
 """
 Force Subscribe Telegram Bot — সিঙ্গেল ফাইল ভার্সন
-
+------------------------------------------------
 এই একটা ফাইলই যথেষ্ট। এটা রান করলে প্রয়োজনীয় লাইব্রেরি নিজে থেকেই
 ইনস্টল হয়ে যাবে, আলাদা করে pip install করা লাগবে না।
 
 আপনাকে শুধু নিচের দুইটা জায়গায় নিজের তথ্য বসাতে হবে:
-1. BOT_TOKEN -> @BotFather থেকে পাওয়া টোকেন
-2. REQUIRED_CHANNELS -> আপনার ৪টি চ্যানেল (আগে থেকেই বসানো আছে)
+    1. BOT_TOKEN  -> @BotFather থেকে পাওয়া টোকেন
+    2. REQUIRED_CHANNELS -> আপনার ৪টি চ্যানেল (আগে থেকেই বসানো আছে)
 
 চালানোর নিয়ম (Termux/Android):
-pkg install python -y
-python bot.py
+    pkg install python -y
+    python bot.py
 
 গুরুত্বপূর্ণ শর্ত:
-বটকে অবশ্যই ৪টি চ্যানেলেই "Admin" বানাতে হবে, নাহলে মেম্বারশিপ চেক
-কাজ করবে না।
+    বটকে অবশ্যই ৪টি চ্যানেলেই "Admin" বানাতে হবে, নাহলে মেম্বারশিপ চেক
+    কাজ করবে না।
 """
 
 import sys
@@ -24,7 +23,6 @@ import subprocess
 import importlib.util
 
 # ---------- নিজে থেকে লাইব্রেরি ইনস্টল করার অংশ ----------
-
 def ensure_installed(package: str, import_name: str = None):
     import_name = import_name or package
     if importlib.util.find_spec(import_name) is None:
@@ -32,7 +30,6 @@ def ensure_installed(package: str, import_name: str = None):
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 ensure_installed("python-telegram-bot==21.6", "telegram")
-
 # -----------------------------------------------------------
 
 import os
@@ -53,18 +50,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ================== ⬇️ এখানে আপনার তথ্য বসানো হয়েছে ⬇️ ==================
+# ================== ⬇️ এখানে আপনার তথ্য বসান ⬇️ ==================
 
-BOT_TOKEN = "8674203664:AAHhAhAPnhHYnhLm6uSlj1IB6LHn5dEBWgc" 
+BOT_TOKEN = "8674203664:AAHhAhAPnhHYnhLm6uSlj1IB6LHn5dEBWgc"  # <-- @BotFather থেকে পাওয়া টোকেন
 
 REQUIRED_CHANNELS = [
     {"id": "@sifatearningboarawwuhdjdb", "name": "Sifat Earning Bd", "url": "https://t.me/sifatearningboarawwuhdjdb"},
-    {"id": "@mdsksifatkhan", "name": "MD SK Sifat Khan", "url": "https://t.me/mdsksifatkhan"},
-    {"id": "@sifatmiys420A", "name": "Sifat Miys", "url": "https://t.me/sifatmiys420A"},
-    {"id": "@QuickEarnBDBot420A", "name": "Quick Earn BD", "url": "https://t.me/QuickEarnBDBot420A"},
+    {"id": "@mdsksifatkhan",            "name": "MD SK Sifat Khan", "url": "https://t.me/mdsksifatkhan"},
+    {"id": "@sifatmiys420A",            "name": "Sifat Miys",       "url": "https://t.me/sifatmiys420A"},
+    {"id": "@QuickEarnBDBot420A",       "name": "Quick Earn BD",    "url": "https://t.me/QuickEarnBDBot420A"},
 ]
 
 # ===================================================================
+
 
 async def is_member_of_all_channels(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> list:
     not_joined = []
@@ -78,6 +76,7 @@ async def is_member_of_all_channels(user_id: int, context: ContextTypes.DEFAULT_
             not_joined.append(channel)
     return not_joined
 
+
 def build_join_keyboard(missing_channels: list) -> InlineKeyboardMarkup:
     buttons = [
         [InlineKeyboardButton(f"➕ Join {ch['name']}", url=ch["url"])]
@@ -87,6 +86,7 @@ def build_join_keyboard(missing_channels: list) -> InlineKeyboardMarkup:
         [InlineKeyboardButton("✅ আমি জয়েন করেছি, আবার চেক করুন", callback_data="check_join")]
     )
     return InlineKeyboardMarkup(buttons)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -103,6 +103,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✅ আপনি সব চ্যানেলে জয়েন করা আছেন। এখন আপনি বটের সব ফিচার ব্যবহার করতে পারবেন!"
     )
 
+
 async def check_join_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     user_id = query.from_user.id
@@ -113,6 +114,7 @@ async def check_join_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     else:
         await query.answer("✅ ধন্যবাদ! আপনি এখন সব ফিচার ব্যবহার করতে পারবেন।", show_alert=True)
         await query.edit_message_text("✅ আপনি সব চ্যানেলে জয়েন করা আছেন। এখন বট ব্যবহার করুন।")
+
 
 async def poll_answer_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     poll_answer = update.poll_answer
@@ -130,19 +132,74 @@ async def poll_answer_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     else:
         logger.info(f"Valid vote counted from user {user_id}")
 
+
+async def startup_channel_check(app):
+    """বট চালু হওয়ার আগে প্রতিটা চ্যানেল অ্যাক্সেস করা যায় কিনা টেস্ট করে
+    এবং সমস্যা থাকলে টার্মিনালে স্পষ্ট করে জানিয়ে দেয়।"""
+    print("চ্যানেলগুলো চেক করা হচ্ছে...")
+    all_ok = True
+    for channel in REQUIRED_CHANNELS:
+        try:
+            chat = await app.bot.get_chat(chat_id=channel["id"])
+            bot_member = await app.bot.get_chat_member(
+                chat_id=channel["id"], user_id=app.bot.id
+            )
+            if bot_member.status not in ("administrator", "creator"):
+                print(f"   ❌ {channel['id']} — বট এই চ্যানেলে Admin না! এখনই Admin বানান।")
+                all_ok = False
+            else:
+                print(f"   ✅ {channel['id']} — ঠিক আছে (বট Admin)")
+        except Exception as e:
+            print(f"   ❌ {channel['id']} — এই চ্যানেল অ্যাক্সেস করা যাচ্ছে না।")
+            print(f"      সম্ভাব্য কারণ: ইউজারনেম ভুল, অথবা বট এই চ্যানেলে যোগই হয়নি।")
+            print(f"      আসল Error: {e}")
+            all_ok = False
+    if not all_ok:
+        print("\n⚠️  উপরের ❌ চিহ্নিত চ্যানেলগুলো ঠিক না করা পর্যন্ত মেম্বারশিপ চেক কাজ করবে না।")
+        print("   তবুও বট চালু থাকবে, কিন্তু ঐ চ্যানেলগুলোর জন্য ভুল ফলাফল দেখাতে পারে।\n")
+    else:
+        print("সব চ্যানেল ঠিক আছে!\n")
+
+
 def main():
-    if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
+    if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE" or not BOT_TOKEN.strip():
         print("\n❌ ভুল: আগে কোডের ভেতরে BOT_TOKEN বসান (উপরের দিকে দেখুন), তারপর আবার রান করুন।\n")
         return
 
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    try:
+        app = ApplicationBuilder().token(BOT_TOKEN).post_init(startup_channel_check).build()
+    except Exception as e:
+        print("\n❌ টোকেন দিয়ে বট তৈরি করা যায়নি। সম্ভাব্য কারণ:")
+        print("   1. টোকেনে ভুল আছে (স্পেস/quote ঠিকমতো নেই)")
+        print("   2. টোকেনটা @BotFather থেকে সঠিকভাবে কপি হয়নি")
+        print(f"   আসল Error: {e}\n")
+        return
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(check_join_callback, pattern="^check_join$"))
     app.add_handler(PollAnswerHandler(poll_answer_handler))
-    
+
     print("✅ Bot চালু হয়েছে... এই উইন্ডো/টার্মিনাল বন্ধ না করলে বট চলতে থাকবে।")
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+    print("   (এখন টেলিগ্রামে গিয়ে বটকে /start দিন)\n")
+
+    try:
+        app.run_polling(allowed_updates=Update.ALL_TYPES)
+    except Exception as e:
+        err_text = str(e)
+        print("\n❌ বট চালু করতে গিয়ে সমস্যা হয়েছে।")
+        if "Unauthorized" in err_text or "401" in err_text:
+            print("   কারণ: BOT_TOKEN ভুল বা এই টোকেনের বট মুছে ফেলা হয়েছে।")
+            print("   সমাধান: @BotFather-এ /mybots দিয়ে টোকেন আবার চেক করুন।")
+        elif "Conflict" in err_text:
+            print("   কারণ: একই বট অন্য কোথাও ইতিমধ্যে চালু আছে (দুইবার একসাথে চালানো যায় না)।")
+            print("   সমাধান: অন্য জায়গায় চালু থাকা bot.py বন্ধ করে শুধু একটাতে চালান।")
+        elif "NetworkError" in err_text or "Timed out" in err_text or "Connection" in err_text:
+            print("   কারণ: ইন্টারনেট কানেকশন সমস্যা বা Telegram-এর সাথে সংযোগ হচ্ছে না।")
+            print("   সমাধান: ওয়াইফাই/ডেটা চেক করুন, VPN ব্যবহার করলে অন/অফ করে দেখুন।")
+        else:
+            print(f"   আসল Error: {err_text}")
+        print()
+
 
 if __name__ == "__main__":
     main()
-
